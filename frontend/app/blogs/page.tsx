@@ -3,16 +3,23 @@ import LeftSidebar from "@/components/LeftSidebar";
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 import { useState, useEffect, useRef } from "react";
-import PostFormModal from "@/components/PostFormModal";
-import DeletePostModal from "@/components/DeletePostModal";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/hooks/useAuth";
 import { Post } from "@/types/post";
 import { Community } from "@/types/post";
+import PostFormModal from "@/components/PostFormModal";
+import DeletePostModal from "@/components/DeletePostModal";
 
 export default function HomePage() {
-  const { posts, createPost, deletePost, updatePost, loading, error } =
-    usePosts();
+  const {
+    posts,
+    setIsMyPosts,
+    createPost,
+    deletePost,
+    updatePost,
+    loading,
+    error,
+  } = usePosts();
   const { user } = useAuth();
 
   const [isLeftMenuOpen, setIsLeftMenuOpen] = useState(true);
@@ -39,6 +46,10 @@ export default function HomePage() {
       setIsInputVisible(false);
     }
   };
+
+  useEffect(() => {
+    setIsMyPosts(true);
+  }, [setIsMyPosts]);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -106,8 +117,6 @@ export default function HomePage() {
     if (hasError) return;
 
     if (currentPost) {
-      // Update post
-
       await updatePost(currentPost.id, {
         title: postTitle,
         description: postDescription,
@@ -122,6 +131,7 @@ export default function HomePage() {
         userId: user?.id || "",
       });
     }
+    setIsMyPosts(true);
     setIsOpen(false);
     setPostTitle("");
     setPostDescription("");
@@ -140,6 +150,7 @@ export default function HomePage() {
   const handleDeletePost = () => {
     if (currentDelete) {
       deletePost(currentDelete);
+      setIsMyPosts(true);
     }
     setIsDeletePostOpen(false);
   };
@@ -174,12 +185,12 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar rightSidebarIndex={"home"} />
-      <main className="w-full flex  bg-gray-100 pt-[60px] lg:pl-[280px] min-h-screen">
-        <LeftSidebar index={"home"} />
+      <Navbar rightSidebarIndex={"blogs"} />
+      <main className="w-full flex flex-col bg-gray-100 pt-[60px] lg:pl-[280px]  min-h-screen">
         <div className="flex w-full justify-center lg:justify-start ">
+          <LeftSidebar index={"blogs"} />
           <div className="flex flex-col w-full lg:w-[75%] items-center">
-            <div className="flex w-full px-4 lg:px-8 py-4 justify-between">
+            <div className="flex w-full px-4 lg:px-8 py-4 justify-between  ">
               {isInputVisible ? (
                 <div className="relative w-full flex items-center">
                   <input
@@ -242,7 +253,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col w-full px-4 lg:px-8">
-              <div className="bg-white rounded-[24px] pb-10 mb-10 ">
+              <div className="bg-white rounded-[24px] pb-10 mb-10">
                 {filteredPosts.length > 0 ? (
                   <>
                     {" "}
@@ -255,6 +266,7 @@ export default function HomePage() {
                               alt="User Avatar"
                               className="rounded-full w-10 h-10 object-cover"
                             />
+
                             <p className="text-gray-300 text-[14px] font-medium">
                               {post.users.username}
                             </p>
@@ -289,8 +301,7 @@ export default function HomePage() {
                           <p className="line-clamp-2 text-[#101828] text-[12px]">
                             {post.description}
                           </p>
-
-                          <div className="flex items-center space-x-1 mt-2 text-[12px] text-gray-300">
+                          <div className="flex space-x-1 mt-2 text-[14px]">
                             <img
                               src="/images/message-circle.svg"
                               alt="Comments Icon"
@@ -306,7 +317,7 @@ export default function HomePage() {
                   </>
                 ) : (
                   <div className="flex font-castoro italic  text-center items-center justify-center min-h-40 font-normal text-[20px]">
-                    Couldn't find posts in this community.
+                    Couldn't find your post.
                   </div>
                 )}
               </div>
@@ -314,7 +325,6 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
       {/* Create/Edit post modal */}
       <PostFormModal
         isOpen={isOpen}
