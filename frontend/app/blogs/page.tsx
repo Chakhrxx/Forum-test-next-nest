@@ -334,7 +334,7 @@ export default function HomePage() {
         postDescription={postDescription}
         postCommunity={postCommunity}
         errorMessages={errorMessages}
-        handleTitleChange={handleSearchChange}
+        handleTitleChange={handleTitleChange}
         handleDescriptionChange={handleDescriptionChange}
         handleCommunitySelect={handleCommunitySelect}
         handlePostSubmit={handlePostSubmit}

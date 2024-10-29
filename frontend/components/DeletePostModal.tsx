@@ -31,7 +31,7 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
           with deleting this post.
         </p>
 
-        <div className="hidden lg:flex justify-end space-x-2">
+        {/* <div className="hidden lg:flex justify-end space-x-2">
           <button
             className="w-full bg-white font-ibm-plex text-gray-500 border-[1px] border-gray-300 text-[14px] font-semibold rounded-lg py-1 px-3 mt-2"
             onClick={onClose} // Cancel action
@@ -44,9 +44,9 @@ const DeletePostModal: React.FC<DeletePostModalProps> = ({
           >
             Delete
           </button>
-        </div>
+        </div> */}
 
-        <div className="flex flex-col w-full lg:hidden">
+        <div className="flex flex-col w-full lg:flex-row lg:space-x-4 pt-8">
           <button
             className="w-full bg-white font-ibm-plex text-gray-500 border-[1px] border-gray-300 text-[14px] font-semibold rounded-lg py-1 px-3 mt-2"
             onClick={onClose} // Cancel action

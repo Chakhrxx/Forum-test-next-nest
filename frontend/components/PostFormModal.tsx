@@ -97,32 +97,15 @@ const PostFormModal: React.FC<PostFormModalProps> = ({
           <p className="text-red-500">{errorMessages.description}</p> // Display description error message
         )}
 
-        {/* Button group for larger screens */}
-        <div className="hidden lg:flex justify-end space-x-2">
+        <div className="flex flex-col w-full lg:flex-row justify-end lg:space-x-3">
           <button
-            className="w-32 bg-white font-ibm-plex text-success border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 "
+            className="w-full lg:w-32 bg-white font-ibm-plex text-success border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 opacity-70"
             onClick={onClose} // Cancel action
           >
             Cancel
           </button>
           <button
-            className="w-32 bg-success font-ibm-plex text-white border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 "
-            onClick={handlePostSubmit} // Submit action
-          >
-            {currentPost ? "Confirm" : "Post"}
-          </button>
-        </div>
-
-        {/* Button group for smaller screens */}
-        <div className="flex flex-col w-full lg:hidden">
-          <button
-            className="w-full bg-white font-ibm-plex text-success border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 opacity-70"
-            onClick={onClose} // Cancel action
-          >
-            Cancel
-          </button>
-          <button
-            className="w-full bg-success font-ibm-plex text-white border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 opacity-70"
+            className="w-full lg:w-32 bg-success font-ibm-plex text-white border-[1px] border-success text-[14px] font-semibold rounded-lg py-1 px-3 mt-2 opacity-70"
             onClick={handlePostSubmit} // Submit action
           >
             {currentPost ? "Confirm" : "Post"}
