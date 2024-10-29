@@ -1,0 +1,1121 @@
+{
+  "info": {
+    "_postman_id": "1b892251-0fd7-4c4e-a02e-0f0caca0b937",
+    "name": "Forum",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "26441750",
+    "_collection_link": "https://grey-shadow-61522.postman.co/workspace/My-Workspace~3a0257f6-695e-4245-8ff1-3e537024ce35/collection/26441750-1b892251-0fd7-4c4e-a02e-0f0caca0b937?action=share&source=collection_link&creator=26441750"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "find One",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "console.log(\"userId\",id);",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"userId\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/8769e14b-1eb2-4009-bbf7-80884d8f9b70",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "8769e14b-1eb2-4009-bbf7-80884d8f9b70"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Simplified Faker-like implementation",
+                  "const faker = {",
+                  "    internet: {",
+                  "        userName: () => {",
+                  "            const names = [\"John\", \"Jane\", \"Doe\", \"Smith\", \"Emily\"];",
+                  "            return `${names[Math.floor(Math.random() * names.length)]}${Math.floor(Math.random() * 1000)}`;",
+                  "        },",
+                  "        email: (username) => {",
+                  "            const domains = [\"example.com\", \"test.com\", \"demo.com\"];",
+                  "            return `${username}@${domains[Math.floor(Math.random() * domains.length)]}`;",
+                  "        },",
+                  "    },",
+                  "};",
+                  "",
+                  "// Generate fake data",
+                  "const username = faker.internet.userName();",
+                  "const fakeUser = {",
+                  "    username: username,",
+                  "    email: faker.internet.email(username), // Pass username to ensure it matches",
+                  "};",
+                  "",
+                  "console.log(\"fakeUser:\", fakeUser);",
+                  "",
+                  "// Set the generated data to Postman variables",
+                  "pm.environment.set('username', fakeUser.username);",
+                  "pm.environment.set('email', fakeUser.email);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "console.log(\"userId\",id);",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"user\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\":\"{{username}}\",\n    \"email\":\"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/8769e14b-1eb2-4009-bbf7-80884d8f9b70",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "8769e14b-1eb2-4009-bbf7-80884d8f9b70"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/3cc1b102-8a45-47ba-a666-f8066e131571",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "3cc1b102-8a45-47ba-a666-f8066e131571"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Simplified Faker-like implementation",
+                  "const faker = {",
+                  "    internet: {",
+                  "        userName: () => {",
+                  "            const names = [\"John\", \"Jane\", \"Doe\", \"Smith\", \"Emily\"];",
+                  "            return `${names[Math.floor(Math.random() * names.length)]}${Math.floor(Math.random() * 1000)}`;",
+                  "        },",
+                  "        email: (username) => {",
+                  "            const domains = [\"example.com\", \"test.com\", \"demo.com\"];",
+                  "            return `${username}@${domains[Math.floor(Math.random() * domains.length)]}`;",
+                  "        },",
+                  "    },",
+                  "};",
+                  "",
+                  "// Generate fake data",
+                  "const username = faker.internet.userName();",
+                  "const fakeUser = {",
+                  "    username: username,",
+                  "    email: faker.internet.email(username), // Pass username to ensure it matches",
+                  "};",
+                  "",
+                  "console.log(\"fakeUser:\", fakeUser);",
+                  "",
+                  "// Set the generated data to Postman variables",
+                  "pm.environment.set('username', fakeUser.username);",
+                  "pm.environment.set('email', fakeUser.email);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "console.log(\"userId\",id);",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"userId\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\":\"{{username}}\",\n    \"email\":\"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"userId\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sign-up",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Simplified Faker-like implementation",
+                  "const faker = {",
+                  "    internet: {",
+                  "        userName: () => {",
+                  "            const names = [\"John\", \"Jane\", \"Doe\", \"Smith\", \"Emily\"];",
+                  "            return `${names[Math.floor(Math.random() * names.length)]}${Math.floor(Math.random() * 1000)}`;",
+                  "        },",
+                  "        email: (username) => {",
+                  "            const domains = [\"example.com\", \"test.com\", \"demo.com\"];",
+                  "            return `${username}@${domains[Math.floor(Math.random() * domains.length)]}`;",
+                  "        },",
+                  "    },",
+                  "};",
+                  "",
+                  "// Generate fake data",
+                  "const username = faker.internet.userName();",
+                  "const fakeUser = {",
+                  "    username: username,",
+                  "    email: faker.internet.email(username), // Pass username to ensure it matches",
+                  "};",
+                  "",
+                  "console.log(\"fakeUser:\", fakeUser);",
+                  "",
+                  "// Set the generated data to Postman variables",
+                  "pm.environment.set('username', fakeUser.username);",
+                  "pm.environment.set('email', fakeUser.email);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the JSON response from the Postman response object",
+                  "const { user, accessToken } = pm.response.json();",
+                  "",
+                  "// Store the user ID in a collection variable named \"userId\"",
+                  "pm.collectionVariables.set(\"userId\", user?.id);",
+                  "// Store the username in a collection variable named \"username\"",
+                  "pm.collectionVariables.set(\"username\", user?.username);",
+                  "// Store the access token in a collection variable named \"accessToken\"",
+                  "pm.collectionVariables.set(\"accessToken\", `Bearer ${accessToken}`);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\":\"{{username}}\",\n    \"email\":\"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/sign-up",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "sign-up"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sign-in",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// // Get the accessToken  from the response",
+                  "const {accessToken} = pm.response.json();",
+                  "",
+                  "",
+                  "// // Set the collection variable to the accessToken",
+                  "pm.collectionVariables.set(\"accessToken\",`Bearer ${accessToken}`);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/sign-in/{{username}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "sign-in", "{{username}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "post",
+      "item": [
+        {
+          "name": "find One",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": ["", ""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/posts/4c0787b0-5f98-4925-b76d-dd0bd35c6fc9",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "4c0787b0-5f98-4925-b76d-dd0bd35c6fc9"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find All",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const faker = {",
+                  "    commerce: {",
+                  "        title: () => {",
+                  "            const titles = [",
+                  "                \"Amazing Post\", ",
+                  "                \"A Day in the Life\", ",
+                  "                \"Cooking Tips\", ",
+                  "                \"Health Benefits of Exercise\", ",
+                  "                \"Fashion Trends 2023\"",
+                  "            ];",
+                  "            return titles[Math.floor(Math.random() * titles.length)];",
+                  "        },",
+                  "        description: (title) => {",
+                  "            const descriptions = {",
+                  "                \"Amazing Post\": \"This post covers various amazing topics that pique interest.\",",
+                  "                \"A Day in the Life\": \"An insightful look into daily routines and activities.\",",
+                  "                \"Cooking Tips\": \"Learn some effective cooking techniques and recipes.\",",
+                  "                \"Health Benefits of Exercise\": \"Exploring how exercise positively impacts health.\",",
+                  "                \"Fashion Trends 2023\": \"A look at the latest styles and trends in fashion this year.\"",
+                  "            };",
+                  "            return descriptions[title] || \"A general description of the content.\";",
+                  "        },",
+                  "    },",
+                  "};",
+                  "",
+                  "const Community = {",
+                  "    History: 'History',",
+                  "    Food: 'Food',",
+                  "    Pets: 'Pets',",
+                  "    Health: 'Health',",
+                  "    Fashion: 'Fashion',",
+                  "    Exercise: 'Exercise',",
+                  "    Others: 'Others',",
+                  "};",
+                  "",
+                  "// Define a mapping for titles to communities",
+                  "const communityMapping = {",
+                  "    \"Amazing Post\": Community.Others,",
+                  "    \"A Day in the Life\": Community.Health,",
+                  "    \"Cooking Tips\": Community.Food,",
+                  "    \"Health Benefits of Exercise\": Community.Health,",
+                  "    \"Fashion Trends 2023\": Community.Fashion,",
+                  "};",
+                  "",
+                  "// Generate fake post data",
+                  "const title = faker.commerce.title();",
+                  "const fakePost = {",
+                  "    title: title,",
+                  "    description: faker.commerce.description(title), // Pass title to get the correct description",
+                  "    community: communityMapping[title] || Object.values(Community)[Math.floor(Math.random() * Object.values(Community).length)],",
+                  "};",
+                  "",
+                  "console.log(\"fakePost:\", fakePost);",
+                  "",
+                  "// Set the generated data to Postman variables",
+                  "pm.environment.set('title', fakePost.title);",
+                  "pm.environment.set('description', fakePost.description);",
+                  "pm.environment.set('community', fakePost.community);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "console.log(\"postId\",id);",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"postId\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"{{title}}\",\n    \"description\": \"{{description}}\",\n    \"community\": \"{{community}}\",\n    \"userId\": \"{{user}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/cd67bc92-544c-4198-9fc3-1d7e99100162",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "cd67bc92-544c-4198-9fc3-1d7e99100162"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "{{accessToken}}",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/posts/cd67bc92-544c-4198-9fc3-1d7e99100162",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "cd67bc92-544c-4198-9fc3-1d7e99100162"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const faker = {",
+                  "    commerce: {",
+                  "        title: () => {",
+                  "            const titles = [",
+                  "                \"Amazing Post\", ",
+                  "                \"A Day in the Life\", ",
+                  "                \"Cooking Tips\", ",
+                  "                \"Health Benefits of Exercise\", ",
+                  "                \"Fashion Trends 2023\"",
+                  "            ];",
+                  "            return titles[Math.floor(Math.random() * titles.length)];",
+                  "        },",
+                  "        description: (title) => {",
+                  "            const descriptions = {",
+                  "                \"Amazing Post\": \"This post covers various amazing topics that pique interest.\",",
+                  "                \"A Day in the Life\": \"An insightful look into daily routines and activities.\",",
+                  "                \"Cooking Tips\": \"Learn some effective cooking techniques and recipes.\",",
+                  "                \"Health Benefits of Exercise\": \"Exploring how exercise positively impacts health.\",",
+                  "                \"Fashion Trends 2023\": \"A look at the latest styles and trends in fashion this year.\"",
+                  "            };",
+                  "            return descriptions[title] || \"A general description of the content.\";",
+                  "        },",
+                  "    },",
+                  "};",
+                  "",
+                  "const Community = {",
+                  "    History: 'History',",
+                  "    Food: 'Food',",
+                  "    Pets: 'Pets',",
+                  "    Health: 'Health',",
+                  "    Fashion: 'Fashion',",
+                  "    Exercise: 'Exercise',",
+                  "    Others: 'Others',",
+                  "};",
+                  "",
+                  "// Define a mapping for titles to communities",
+                  "const communityMapping = {",
+                  "    \"Amazing Post\": Community.Others,",
+                  "    \"A Day in the Life\": Community.Health,",
+                  "    \"Cooking Tips\": Community.Food,",
+                  "    \"Health Benefits of Exercise\": Community.Health,",
+                  "    \"Fashion Trends 2023\": Community.Fashion,",
+                  "};",
+                  "",
+                  "// Generate fake post data",
+                  "const title = faker.commerce.title();",
+                  "const fakePost = {",
+                  "    title: title,",
+                  "    description: faker.commerce.description(title), // Pass title to get the correct description",
+                  "    community: communityMapping[title] || Object.values(Community)[Math.floor(Math.random() * Object.values(Community).length)],",
+                  "};",
+                  "",
+                  "console.log(\"fakePost:\", fakePost);",
+                  "",
+                  "// Set the generated data to Postman variables",
+                  "pm.environment.set('title', fakePost.title);",
+                  "pm.environment.set('description', fakePost.description);",
+                  "pm.environment.set('community', fakePost.community);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Get the user id from the response",
+                  "const id = pm.response.json().id;",
+                  "",
+                  "console.log(\"postId\",id);",
+                  "",
+                  "// Set the collection variable to the user id",
+                  "pm.collectionVariables.set(\"postId\",id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"{{title}}\",\n    \"description\": \"{{description}}\",\n    \"community\": \"{{community}}\",\n    \"userId\": \"{{user}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "comment",
+      "item": [
+        {
+          "name": "find One",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": ["", ""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/comments/424dd224-b0b9-4e0a-a1fb-444e9a92f5f4",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "424dd224-b0b9-4e0a-a1fb-444e9a92f5f4"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "find All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/comments?",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments"],
+              "query": [
+                {
+                  "key": "",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Function to generate a random lorem ipsum string",
+                  "function generateLoremIpsum(words) {",
+                  "    const loremIpsum = \"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\";",
+                  "    const loremArray = loremIpsum.split(\" \");",
+                  "    let result = [];",
+                  "",
+                  "    for (let i = 0; i < words; i++) {",
+                  "        const randomIndex = Math.floor(Math.random() * loremArray.length);",
+                  "        result.push(loremArray[randomIndex]);",
+                  "    }",
+                  "",
+                  "    return result.join(\" \");",
+                  "}",
+                  "",
+                  "// Set a random lorem ipsum string as an environment variable",
+                  "pm.environment.set(\"message\", generateLoremIpsum(10)); // Change the number to get more/less words",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"message\": \"{{message}}\",\n    \"userId\": \"{{user}}\",\n    \"postId\": \"{{postId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comments/c7e877d2-5190-4a97-9c07-4a1eaf3a755d",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "c7e877d2-5190-4a97-9c07-4a1eaf3a755d"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/comments/c7e877d2-5190-4a97-9c07-4a1eaf3a755d",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "c7e877d2-5190-4a97-9c07-4a1eaf3a755d"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Function to generate a random lorem ipsum string",
+                  "function generateLoremIpsum(words) {",
+                  "    const loremIpsum = \"lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua\";",
+                  "    const loremArray = loremIpsum.split(\" \");",
+                  "    let result = [];",
+                  "",
+                  "    for (let i = 0; i < words; i++) {",
+                  "        const randomIndex = Math.floor(Math.random() * loremArray.length);",
+                  "        result.push(loremArray[randomIndex]);",
+                  "    }",
+                  "",
+                  "    return result.join(\" \");",
+                  "}",
+                  "",
+                  "// Set a random lorem ipsum string as an environment variable",
+                  "pm.environment.set(\"message\", generateLoremIpsum(10)); // Change the number to get more/less words",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"message\": \"{{message}}\",\n    \"userId\": \"{{userId}}\",\n    \"postId\": \"{{postId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Hello World",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "X74cJvjeEXRr8K7ETBtcrOquXJoYTfXrVK7Rs1sKS1voKcwrtV9TC52gAyloDm8u",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}",
+          "host": ["{{baseUrl}}"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "user",
+      "value": ""
+    },
+    {
+      "key": "postId",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "apiKey",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

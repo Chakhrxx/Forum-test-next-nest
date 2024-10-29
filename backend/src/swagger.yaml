@@ -1,0 +1,1195 @@
+openapi: 3.0.0
+info:
+  title: Forum API
+  description: |
+    API for managing forums, topics, and posts. This API enables users to create, read, update, and delete forums along with their associated topics and posts.
+
+    ## Forum Features
+    - **Forums**: Manage various discussion forums.
+    - **Topics**: Create topics within each forum to facilitate focused discussions.
+    - **Posts**: Users can create and manage posts within topics.
+    - **User Interaction**: Users can comment on posts and engage with one another.
+
+    ## contact
+    - **Name**: Suchakhri Dangthaisong
+    - **Email**: chakhree.h@gmail.com
+    - **Git**: https://github.com/Chakhrxx
+
+  version: '1.0'
+
+servers:
+  - url: http://localhost:3001
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: 'API key needed to access the endpoints.'
+    JwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT needed to access secured endpoints.'
+
+  examples:
+    ApiKeyExample:
+      value: 'X74cJvjeEXRr8K7ETBtcrOquXJoYTfXrVK7Rs1sKS1voKcwrtV9TC52gAyloDm8u'
+
+security:
+  - ApiKeyAuth: []
+  - JwtAuth: []
+
+tags:
+  - name: Auth
+    description: Operations related to auth management.
+  - name: Users
+    description: Operations related to user management.
+  - name: Posts
+    description: Operations related to post management.
+  - name: Comments
+    description: Operations related to comment management.
+
+paths:
+  /api:
+    get:
+      summary: Get Hello message
+      responses:
+        '200':
+          description: Successfully retrieved the hello message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /api/sign-up:
+    post:
+      tags:
+        - Auth
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+              required:
+                - username
+                - email
+              example:
+                username: 'Smith57'
+                email: 'Smith57@test.com'
+      responses:
+        '201':
+          description: Successfully created user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      id:
+                        type: string
+                        format: uuid
+                      created:
+                        type: string
+                        format: date-time
+                      updated:
+                        type: string
+                        format: date-time
+                  accessToken:
+                    type: string
+                example:
+                  user:
+                    username: 'Smith57'
+                    email: 'Smith57@test.com'
+                    id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                    created: '2024-10-26T13:33:12.348Z'
+                    updated: '2024-10-26T13:33:12.348Z'
+                  accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4yNzIiLCJzdWIiOiIyNWEyZjllYS05ZTc4LTQzNjQtYWIxMS1kYmMxM2YyZDg1OTkiLCJpYXQiOjE3MzAwMTA2NjAsImV4cCI6MTc2MTU2ODI2MH0.xV1gIyGi-Y4af1EU8re7KDePXvFXzrEbRx-570EjY3s
+
+  /api/sign-in/{username}:
+    post:
+      tags:
+        - Auth
+      summary: Retrieve a user by Username
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username of the user to retrieve
+          schema:
+            type: string
+            example: 'John389'
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                example:
+                  accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4yNzIiLCJzdWIiOiIyNWEyZjllYS05ZTc4LTQzNjQtYWIxMS1kYmMxM2YyZDg1OTkiLCJpYXQiOjE3MzAwMTA2NjAsImV4cCI6MTc2MTU2ODI2MH0.xV1gIyGi-Y4af1EU8re7KDePXvFXzrEbRx-570EjY3s
+        '404':
+          description: User not found
+
+  /api/me:
+    get:
+      tags:
+        - Auth
+      summary: Retrieve a user by  accessToken
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example:
+                  username: 'Smith57'
+                  email: 'Smith57@test.com'
+                  id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                  created: '2024-10-26T13:33:12.348Z'
+                  updated: '2024-10-26T13:33:12.348Z'
+        '404':
+          description: User not found
+
+  /api/users:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+              required:
+                - username
+                - email
+              example:
+                username: 'Smith57'
+                email: 'Smith57@test.com'
+      responses:
+        '201':
+          description: Successfully created user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example:
+                  username: 'Smith57'
+                  email: 'Smith57@test.com'
+                  id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                  created: '2024-10-26T13:33:12.348Z'
+                  updated: '2024-10-26T13:33:12.348Z'
+
+    get:
+      tags:
+        - Users
+      summary: Retrieve all users
+      security:
+        - JwtAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    id:
+                      type: string
+                      format: uuid
+                    created:
+                      type: string
+                      format: date-time
+                    updated:
+                      type: string
+                      format: date-time
+              example:
+                - username: 'Smith57'
+                  email: 'Smith57@test.com'
+                  id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                  created: '2024-10-26T13:33:12.348Z'
+                  updated: '2024-10-26T13:33:12.348Z'
+                - username: 'DoeJohn'
+                  email: 'DoeJohn@test.com'
+                  id: 'c47d8f5e-99de-4c29-9e05-4bb5cf7e1e70'
+                  created: '2024-10-25T11:22:33.123Z'
+                  updated: '2024-10-25T11:22:33.123Z'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Retrieve a user by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to retrieve
+          schema:
+            type: string
+            example: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example:
+                  username: 'Smith57'
+                  email: 'Smith57@test.com'
+                  id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                  created: '2024-10-26T13:33:12.348Z'
+                  updated: '2024-10-26T13:33:12.348Z'
+        '404':
+          description: User not found
+
+    patch:
+      tags:
+        - Users
+      summary: Update a user by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to update
+          schema:
+            type: string
+            example: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+              example:
+                username: 'Smith57'
+                email: 'Smith57@test.com'
+      responses:
+        '200':
+          description: Successfully updated user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example:
+                  username: 'Smith57'
+                  email: 'Smith57@test.com'
+                  id: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+                  created: '2024-10-26T13:33:12.348Z'
+                  updated: '2024-10-26T13:33:12.348Z'
+
+    delete:
+      tags:
+        - Users
+      summary: Delete a user by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to delete
+          schema:
+            type: string
+            example: '75d07e3b-9b64-4822-89bf-777c97b9e51b'
+      responses:
+        '204':
+          description: Successfully deleted user
+        '404':
+          description: User not found
+
+  /api/posts:
+    post:
+      tags:
+        - Posts
+      summary: Create a new post
+      security:
+        - JwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                community:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+                required:
+                  - title
+                  - description
+                  - community
+                  - userId
+              example: # Example for the request body
+                title: 'Amazing Post'
+                description: 'This post covers various amazing topics that pique interest.'
+                community: 'Others'
+                user: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+      responses:
+        '201':
+          description: Successfully created post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  community:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      username:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      created:
+                        type: string
+                        format: date-time
+                      updated:
+                        type: string
+                        format: date-time
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example: # Example for the response body
+                  title: 'Amazing Post'
+                  description: 'This post covers various amazing topics that pique interest.'
+                  community: 'Others'
+                  user:
+                    id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                    username: 'Jane409'
+                    email: 'Jane409@example.com'
+                    created: '2024-10-26T11:14:06.490Z'
+                    updated: '2024-10-26T13:35:13.388Z'
+                  id: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                  created: '2024-10-26T14:01:38.106Z'
+                  updated: '2024-10-26T14:01:38.106Z'
+
+    get:
+      tags:
+        - Posts
+      summary: Retrieve all posts
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of posts per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Successfully retrieved posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        community:
+                          type: string
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            username:
+                              type: string
+                        comments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: uuid
+                              message:
+                                type: string
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  totalPages:
+                    type: integer
+                example: # Example for the response body
+                  posts:
+                    - id: '2e82e710-1ef3-4cb2-a1d1-edf11d7be805'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: '8801a60b-ebca-4fcf-842d-9a65b93dc86d'
+                        username: 'Smith664'
+                      comments: []
+                    - id: '4c0787b0-5f98-4925-b76d-dd0bd35c6fc9'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: '8801a60b-ebca-4fcf-842d-9a65b93dc86d'
+                        username: 'Smith664'
+                      comments:
+                        - id: '569549f3-ba48-442b-a54c-ecaf559a83d5'
+                          message: 'elit aliqua tempor magna ipsum dolore adipiscing tempor incididunt elit'
+                        - id: 'cffe5260-d224-448b-825a-93bfee2d7c71'
+                          message: 'dolor magna et labore eiusmod incididunt lorem elit dolore aliqua'
+                        - id: '09206adc-0802-45e8-9e38-c1609775d83f'
+                          message: '5555555'
+                        - id: '05dcfae2-126b-431e-adbe-2e3569c2db61'
+                          message: '5555555'
+                        - id: '2eeff6da-e768-4103-8c62-04703ccff26f'
+                          message: '5555555'
+                    - id: '0a2e4074-7139-4d78-b0f3-b6219fd16c9c'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                    - id: '161a3f7f-bc9e-4e9e-9ad4-d358a6750bb7'
+                      title: 'Amazing Post'
+                      description: 'This post covers various amazing topics that pique interest.'
+                      community: 'Others'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                    - id: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                      title: 'Amazing Post'
+                      description: 'This post covers various amazing topics that pique interest.'
+                      community: 'Others'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                  total: 5
+                  page: 1
+                  totalPages: 1
+
+  /api/posts/{id}:
+    get:
+      tags:
+        - Posts
+      summary: Retrieve a post by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the post to retrieve
+          schema:
+            type: string
+            format: uuid
+            example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f' # Example post ID
+      responses:
+        '200':
+          description: Successfully retrieved post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  community:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      username:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example: # Example for the response body
+                  title: 'Amazing Post'
+                  description: 'This post covers various amazing topics that pique interest.'
+                  community: 'Others'
+                  user:
+                    id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                    username: 'Jane409'
+                    email: 'Jane409@example.com'
+                  id: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                  created: '2024-10-26T14:01:38.106Z'
+                  updated: '2024-10-26T14:01:38.106Z'
+        '404':
+          description: Post not found
+
+    patch:
+      tags:
+        - Posts
+      summary: Update a post by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the post to update
+          schema:
+            type: string
+            format: uuid
+            example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f' # Example post ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                community:
+                  type: string
+                userId:
+                  type: string
+                  format: uuid
+              required:
+                - title
+                - description
+                - community
+                - userId
+              example: # Example for the request body
+                title: 'Updated Amazing Post'
+                description: 'This post has been updated with new information.'
+                community: 'General'
+                userId: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+      responses:
+        '200':
+          description: Successfully updated post
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  community:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      username:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                  id:
+                    type: string
+                    format: uuid
+                  created:
+                    type: string
+                    format: date-time
+                  updated:
+                    type: string
+                    format: date-time
+                example: # Example for the response body
+                  title: 'Updated Amazing Post'
+                  description: 'This post has been updated with new information.'
+                  community: 'General'
+                  user:
+                    id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                    username: 'Jane409'
+                    email: 'Jane409@example.com'
+                  id: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                  created: '2024-10-26T14:01:38.106Z'
+                  updated: '2024-10-26T14:01:38.106Z'
+        '404':
+          description: Post not found
+
+    delete:
+      tags:
+        - Posts
+      summary: Delete a post by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the post to delete
+          schema:
+            type: string
+            format: uuid
+            example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f' # Example post ID
+      responses:
+        '204':
+          description: Successfully deleted post
+        '404':
+          description: Post not found
+
+  /api/comments:
+    post:
+      tags:
+        - Comments
+      summary: Create a new comment
+      security:
+        - JwtAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                postId:
+                  type: string
+                  format: uuid
+                userId:
+                  type: string
+                  format: uuid
+              required:
+                - message
+                - userId
+                - postId
+            example:
+              message: 'This is a great post!'
+              userId: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+              postId: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+      responses:
+        '201':
+          description: Successfully created comment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: '569549f3-ba48-442b-a54c-ecaf559a83d5'
+                  message:
+                    type: string
+                    example: 'This is a great post!'
+                  created:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T13:20:02.664Z'
+                  updated:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T14:21:43.751Z'
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                      username:
+                        type: string
+                        example: 'Jane409'
+                      email:
+                        type: string
+                        format: email
+                        example: 'Jane409@example.com'
+                      created:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T11:14:06.490Z'
+                      updated:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T13:35:13.388Z'
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: '4c0787b0-5f98-4925-b76d-dd0bd35c6fc9'
+                      title:
+                        type: string
+                        example: 'A Day in the Life'
+                      description:
+                        type: string
+                        example: 'An insightful look into daily routines and activities.'
+                      community:
+                        type: string
+                        example: 'Health'
+                      created:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T11:11:20.788Z'
+                      updated:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T13:21:40.844Z'
+                  userId:
+                    type: string
+                    format: uuid
+                    example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                  postId:
+                    type: string
+                    format: uuid
+                    example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+
+    get:
+      tags:
+        - Comments
+      summary: Retrieve all comments
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page number for pagination
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          description: Number of comments per page
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Successfully retrieved comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          example: 'b03c1f87-b2c2-40b7-b2a9-9b5a895eb50c'
+                        message:
+                          type: string
+                          example: 'amet sed aliqua et eiusmod ut eiusmod elit do consectetur'
+                        post:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                              example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                            title:
+                              type: string
+                              example: 'Amazing Post'
+                            description:
+                              type: string
+                              example: 'This post covers various amazing topics that pique interest.'
+                            community:
+                              type: string
+                              example: 'Others'
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                              example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                            username:
+                              type: string
+                              example: 'Jane409'
+                  total:
+                    type: integer
+                    example: 8
+                  page:
+                    type: integer
+                    example: 1
+                  totalPages:
+                    type: integer
+                    example: 1
+
+  /api/comments/{id}:
+    get:
+      tags:
+        - Comments
+      summary: Retrieve a comment by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the comment to retrieve
+          schema:
+            type: string
+            format: uuid
+            example: 'b03c1f87-b2c2-40b7-b2a9-9b5a895eb50c'
+      responses:
+        '200':
+          description: Successfully retrieved comment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: 'b03c1f87-b2c2-40b7-b2a9-9b5a895eb50c'
+                  message:
+                    type: string
+                    example: 'amet sed aliqua et eiusmod ut eiusmod elit do consectetur'
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                      title:
+                        type: string
+                        example: 'Amazing Post'
+                      description:
+                        type: string
+                        example: 'This post covers various amazing topics that pique interest.'
+                      community:
+                        type: string
+                        example: 'Others'
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                      username:
+                        type: string
+                        example: 'Jane409'
+                      email:
+                        type: string
+                        format: email
+                        example: 'Jane409@example.com'
+                  created:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T14:19:15.675Z'
+                  updated:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T14:19:15.675Z'
+        '404':
+          description: Comment not found
+
+    patch:
+      tags:
+        - Comments
+      summary: Update an existing comment
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the comment to update
+          schema:
+            type: string
+            format: uuid
+            example: '569549f3-ba48-442b-a54c-ecaf559a83d5'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                postId:
+                  type: string
+                  format: uuid
+                userId:
+                  type: string
+                  format: uuid
+              required:
+                - message
+              example:
+                message: 'This is an updated comment!'
+                postId: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                userId: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+      responses:
+        '200':
+          description: Successfully updated comment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: '569549f3-ba48-442b-a54c-ecaf559a83d5'
+                  message:
+                    type: string
+                    example: 'This is an updated comment!'
+                  created:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T13:20:02.664Z'
+                  updated:
+                    type: string
+                    format: date-time
+                    example: '2024-10-26T14:21:43.751Z'
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                      username:
+                        type: string
+                        example: 'Jane409'
+                      email:
+                        type: string
+                        format: email
+                        example: 'Jane409@example.com'
+                      created:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T11:14:06.490Z'
+                      updated:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T13:35:13.388Z'
+                  post:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                        example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                      title:
+                        type: string
+                        example: 'Amazing Post'
+                      description:
+                        type: string
+                        example: 'This post covers various amazing topics that pique interest.'
+                      community:
+                        type: string
+                        example: 'Others'
+                      created:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T11:11:20.788Z'
+                      updated:
+                        type: string
+                        format: date-time
+                        example: '2024-10-26T13:21:40.844Z'
+                  userId:
+                    type: string
+                    format: uuid
+                    example: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                  postId:
+                    type: string
+                    format: uuid
+                    example: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+        '400':
+          description: Bad request
+        '404':
+          description: Comment not found
+
+    delete:
+      tags:
+        - Comments
+      summary: Delete a comment by ID
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the comment to delete
+          schema:
+            type: string
+            format: uuid
+            example: '8f7e3b85-500b-4c70-a8ec-3c34c6e43144'
+      responses:
+        '204':
+          description: Successfully deleted comment
+        '404':
+          description: Comment not found
