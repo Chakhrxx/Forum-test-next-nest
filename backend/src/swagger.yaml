@@ -624,6 +624,130 @@ paths:
                   page: 1
                   totalPages: 1
 
+  /api/posts/me:
+    get:
+      tags:
+        - Posts
+      summary: Retrieve your posts
+      security:
+        - JwtAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Number of posts per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Successfully retrieved posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        community:
+                          type: string
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            username:
+                              type: string
+                        comments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: uuid
+                              message:
+                                type: string
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  totalPages:
+                    type: integer
+                example: # Example for the response body
+                  posts:
+                    - id: '2e82e710-1ef3-4cb2-a1d1-edf11d7be805'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: '8801a60b-ebca-4fcf-842d-9a65b93dc86d'
+                        username: 'Smith664'
+                      comments: []
+                    - id: '4c0787b0-5f98-4925-b76d-dd0bd35c6fc9'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: '8801a60b-ebca-4fcf-842d-9a65b93dc86d'
+                        username: 'Smith664'
+                      comments:
+                        - id: '569549f3-ba48-442b-a54c-ecaf559a83d5'
+                          message: 'elit aliqua tempor magna ipsum dolore adipiscing tempor incididunt elit'
+                        - id: 'cffe5260-d224-448b-825a-93bfee2d7c71'
+                          message: 'dolor magna et labore eiusmod incididunt lorem elit dolore aliqua'
+                        - id: '09206adc-0802-45e8-9e38-c1609775d83f'
+                          message: '5555555'
+                        - id: '05dcfae2-126b-431e-adbe-2e3569c2db61'
+                          message: '5555555'
+                        - id: '2eeff6da-e768-4103-8c62-04703ccff26f'
+                          message: '5555555'
+                    - id: '0a2e4074-7139-4d78-b0f3-b6219fd16c9c'
+                      title: 'A Day in the Life'
+                      description: 'An insightful look into daily routines and activities.'
+                      community: 'Health'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                    - id: '161a3f7f-bc9e-4e9e-9ad4-d358a6750bb7'
+                      title: 'Amazing Post'
+                      description: 'This post covers various amazing topics that pique interest.'
+                      community: 'Others'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                    - id: '69cbd11f-5ffb-4566-8a3a-107e6eda3a9f'
+                      title: 'Amazing Post'
+                      description: 'This post covers various amazing topics that pique interest.'
+                      community: 'Others'
+                      user:
+                        id: 'b792a034-c34a-459b-aeda-babb500ac0cb'
+                        username: 'Jane409'
+                      comments: []
+                  total: 5
+                  page: 1
+                  totalPages: 1
+
   /api/posts/{id}:
     get:
       tags:
