@@ -1,0 +1,64 @@
+name: Deploy Nestjs to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🚀 Deploy production
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get Latest Code
+        uses: actions/checkout@v4
+
+      - name: 🖥️ Set up Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: 📦 Install dependencies
+        run: |
+          bun install
+
+      - name: 💿 Build the app
+
+        run: |
+          bun run build
+
+      - name: 🔧 Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.BACKEND_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.BACKEND_SERVER_DOMAIN }} > ~/.ssh/known_hosts
+
+      - name: 💽 Copy files to the server
+        run: |
+          rsync -azP --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_DOMAIN }}:~/api
+
+      - name: 📚 Deploy with PM2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_DOMAIN }} 'bash -s' << 'EOF'
+            # Navigate to the application directory
+            cd ~/api
+                
+
+            # Create or update the .env file with environment variables
+            echo "${{ secrets.BACKEND_ENV_CONTENT }}" > .env
+
+            # Stop and remove the PM2 process for the forum-backend application if it exists
+            pm2 delete forum-backend || true
+
+            # Start the PM2 processes defined in the ecosystem.config.cjs file with the production environment
+            pm2 start ecosystem.config.js --env production
+
+            # Replace the Nginx configuration file with the new one from the app directory
+            sudo cp config/nginx.conf /etc/nginx/nginx.conf
+
+            # Test the new Nginx configuration for syntax errors
+            sudo nginx -t
+
+            # Restart Nginx to apply the new configuration
+            sudo systemctl restart nginx
+            EOF
