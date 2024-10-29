@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  # Redis cache service
+  redis-cache:
+    image: redis:7.4.1 # Use Redis version 7.4.1
+    container_name: redis-cache # Name of the container
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD} # Set the Redis password from environment variable
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"] # Start Redis server with password requirement
+    ports:
+      - "${REDIS_PORT}:6379" # Map the specified port to Redis default port 6379
+    networks:
+      - redis-network # Connect to the redis-network
+    restart: unless-stopped # Restart the container unless it is explicitly stopped
+
+  # Redis Insight service for monitoring Redis
+  redis-insight:
+    image: redis/redisinsight:2.58 # Use Redis Insight version 2.58
+    container_name: redis-insight # Name of the container
+    ports:
+      - "${REDIS_INSIGHT_PORT}:5540" # Map the specified port to Redis Insight default port 5540
+    depends_on:
+      - redis-cache # Ensure redis-cache is started before this service
+    networks:
+      - redis-network # Connect to the redis-network
+    restart: unless-stopped # Restart the container unless it is explicitly stopped
+
+networks:
+  # Define the network for the services
+  redis-network:
+    driver: bridge # Use the bridge network driver
