@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  postgres-primary:
+    image: bitnami/postgresql:17 # Use Bitnami's PostgreSQL image
+    container_name: postgres-primary # Name of the primary PostgreSQL container
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master # Set the role to master
+      - POSTGRESQL_REPLICATION_USER=${PG_USER} # Replication user
+      - POSTGRESQL_REPLICATION_PASSWORD=${PG_PASSWORD} # Replication password
+      - POSTGRESQL_PASSWORD=${PG_PASSWORD} # Password for the default PostgreSQL user
+      - POSTGRESQL_USERNAME=${PG_USER} # Default PostgreSQL username
+      - POSTGRESQL_DATABASE=${PG_DATABASE} # Database to create
+      - POSTGRESQL_POSTGRES_PASSWORD=${PG_PASSWORD} # Password for the "postgres" user
+      - POSTGRESQL_TIMEZONE=Asia/Bangkok # Set the timezone
+    volumes:
+      - postgres-primary-data:/bitnami/postgresql # Persistent storage for primary data
+      - ./config/postgresql.conf:/bitnami/postgresql/conf/postgresql.conf:ro # Custom PostgreSQL config
+    networks:
+      - postgres-network # Network for the service
+    restart: unless-stopped # Restart policy
+
+  postgres-standby:
+    image: bitnami/postgresql:17 # Use Bitnami's PostgreSQL image
+    container_name: postgres-standby # Name of the standby PostgreSQL container
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave # Set the role to slave
+      - POSTGRESQL_REPLICATION_USER=${PG_USER} # Replication user
+      - POSTGRESQL_REPLICATION_PASSWORD=${PG_PASSWORD} # Replication password
+      - POSTGRESQL_MASTER_HOST=postgres-primary # Hostname of the master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432 # Port of the master
+      - POSTGRESQL_PASSWORD=${PG_PASSWORD} # Password for the default PostgreSQL user
+      - POSTGRESQL_USERNAME=${PG_USER} # Default PostgreSQL username
+      - POSTGRESQL_DATABASE=${PG_DATABASE} # Database to create
+      - POSTGRESQL_POSTGRES_PASSWORD=${PG_PASSWORD} # Password for the "postgres" user
+      - POSTGRESQL_TIMEZONE=Asia/Bangkok # Set the timezone
+    depends_on:
+      - postgres-primary # Ensure primary is up before starting standby
+    volumes:
+      - postgres-standby-data:/bitnami/postgresql # Persistent storage for standby data
+      - ./config/postgresql.conf:/bitnami/postgresql/conf/postgresql.conf:ro # Custom PostgreSQL config
+    networks:
+      - postgres-network # Network for the service
+    restart: unless-stopped # Restart policy
+
+  postgres-pool:
+    image: bitnami/pgpool:4 # Use Bitnami's Pgpool image
+    container_name: postgres-pool # Name of the Pgpool container
+    environment:
+      - PGPOOL_BACKEND_NODES=0:postgres-primary:5432,1:postgres-standby:5432 # Backend nodes for load balancing
+      - PGPOOL_SR_CHECK_USER=${PG_USER} # User for health checks
+      - PGPOOL_SR_CHECK_PASSWORD=${PG_PASSWORD} # Password for health checks
+      - PGPOOL_ADMIN_USERNAME=${PG_USER} # Admin username for Pgpool
+      - PGPOOL_ADMIN_PASSWORD=${PG_PASSWORD} # Admin password for Pgpool
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes # Enable load balancing
+      - PGPOOL_POSTGRES_USERNAME=${PG_USER} # PostgreSQL username for Pgpool
+      - PGPOOL_POSTGRES_PASSWORD=${PG_PASSWORD} # PostgreSQL password for Pgpool
+      - PGPOOL_POSTGRES_DATABASE=${PG_DATABASE} # Database for Pgpool
+    ports:
+      - "${PG_PORT}:5432" # Map host port to Pgpool port
+    depends_on:
+      - postgres-primary # Ensure primary is up before starting Pgpool
+      - postgres-standby # Ensure standby is up before starting Pgpool
+    networks:
+      - postgres-network # Network for the service
+    restart: unless-stopped # Restart policy
+
+  postgres-admin:
+    image: dpage/pgadmin4 # Use pgAdmin image for database management
+    container_name: postgres-admin # Name of the pgAdmin container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL} # Admin email for pgAdmin
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD} # Admin password for pgAdmin
+    ports:
+      - "${PGADMIN_PORT}:80" # Map host port to pgAdmin port
+    networks:
+      - postgres-network # Network for the service
+    restart: unless-stopped # Restart policy
+
+volumes:
+  postgres-primary-data: # Volume for primary PostgreSQL data
+  postgres-standby-data: # Volume for standby PostgreSQL data
+
+networks:
+  postgres-network:
+    driver: bridge # Use the bridge driver for network isolation
